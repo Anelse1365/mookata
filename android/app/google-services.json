@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "324331790151",
+    "project_id": "mookata22222",
+    "storage_bucket": "mookata22222.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:324331790151:android:f5dfa3119c9d588832b662",
+        "android_client_info": {
+          "package_name": "com.example.mookata"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_ex5tw5ZJhA23MxvQ4yl8FhTsjdO7GIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
