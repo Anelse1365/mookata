@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
-import 'package:sembast_web/sembast_web.dart';
-import 'reserve/reserve.dart';
+import 'package:sembast/sembast_io.dart';
+import 'reserve/reserve.dart'; // ต้องแก้ไขตามโครงสร้างของโปรเจคของคุณ
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final database = await databaseFactoryWeb.openDatabase('reservation_database.db');
+  final appDocumentDir = await getApplicationDocumentsDirectory();
+  final databasePath = appDocumentDir.path;
+  final database = await databaseFactoryIo.openDatabase('$databasePath/reservation_database.db');
   final store = intMapStoreFactory.store('reservations');
   runApp(MyApp(database: database, store: store));
 }
@@ -27,5 +30,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

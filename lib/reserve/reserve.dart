@@ -6,12 +6,11 @@ class ReservationPage extends StatefulWidget {
   final Database database;
   final StoreRef<int, Map<String, dynamic>> store;
 
-  const ReservationPage({super.key, required this.database, required this.store});
+  const ReservationPage({Key? key, required this.database, required this.store}) : super(key: key);
 
   @override
   _ReservationPageState createState() => _ReservationPageState();
 }
-
 
 class _ReservationPageState extends State<ReservationPage> {
   final TextEditingController _dateController = TextEditingController();
@@ -24,11 +23,11 @@ class _ReservationPageState extends State<ReservationPage> {
   @override
   void initState() {
     super.initState();
-    _openDatabase();
+    _openDatabase(); // Call _openDatabase to initialize _database
   }
 
   Future<void> _openDatabase() async {
-    _database = await databaseFactoryIo.openDatabase('reservation_database.db'); // Initialize _database
+    _database = widget.database; // Use the provided database
   }
 
   void _submitReservation() async {
@@ -60,14 +59,14 @@ class _ReservationPageState extends State<ReservationPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Reservation Successful'),
-          content: Text('Your reservation has been successfully placed.'),
+          title: const Text('Reservation Successful'),
+          content: const Text('Your reservation has been successfully placed.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -80,38 +79,51 @@ class _ReservationPageState extends State<ReservationPage> {
     await store.add(_database, record);
   }
 
+  void _viewReservations() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ViewReservationsPage(database: _database, store: widget.store)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Table Reservation'),
+        title: const Text('Table Reservation'),
+        actions: [
+          IconButton(
+            onPressed: _viewReservations,
+            icon: Icon(Icons.list),
+          ),
+        ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextField(
               controller: _dateController,
-              decoration: InputDecoration(labelText: 'Date'),
+              decoration: const InputDecoration(labelText: 'Date'),
             ),
             TextField(
               controller: _timeController,
-              decoration: InputDecoration(labelText: 'Time'),
+              decoration: const InputDecoration(labelText: 'Time'),
             ),
             TextField(
               controller: _numberOfPeopleController,
-              decoration: InputDecoration(labelText: 'Number of People'),
+              decoration: const InputDecoration(labelText: 'Number of People'),
               keyboardType: TextInputType.number,
             ),
             TextField(
               controller: _contactInfoController,
-              decoration: InputDecoration(labelText: 'Contact Information'),
+              decoration: const InputDecoration(labelText: 'Contact Information'),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: _submitReservation,
-              child: Text('Submit Reservation'),
+              child: const Text('Submit Reservation'),
             ),
           ],
         ),
@@ -123,5 +135,53 @@ class _ReservationPageState extends State<ReservationPage> {
   void dispose() {
     _database.close(); // Close the database when the widget is disposed
     super.dispose();
+  }
+}
+
+class ViewReservationsPage extends StatelessWidget {
+  final Database database;
+  final StoreRef<int, Map<String, dynamic>> store;
+
+  const ViewReservationsPage({Key? key, required this.database, required this.store}) : super(key: key);
+
+  Future<List<Map<String, dynamic>>> getReservations() async {
+    final records = await store.find(database);
+    return records.map((record) => record.value).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('View Reservations'),
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: getReservations(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            final reservations = snapshot.data!;
+            return ListView.builder(
+              itemCount: reservations.length,
+              itemBuilder: (context, index) {
+                final reservation = reservations[index];
+                return ListTile(
+                  title: Text('Date: ${reservation['date']}'),
+                  subtitle: Text('Time: ${reservation['time']}'),
+                  // You can add more information here as needed
+                );
+              },
+            );
+          }
+        },
+      ),
+    );
   }
 }
