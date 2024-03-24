@@ -1,30 +1,30 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart'; // Import Mockito for creating mock objects
+import 'package:sembast/sembast.dart';
+import 'package:flutter_database/reserve/reserve.dart';
 
-import 'package:flutter_application_1/main.dart';
+
+class MockDatabase extends Mock implements Database {} // Create a mock database class
+class MockStore extends Mock implements StoreRef<int, Map<String, dynamic>> {} // Create a mock store class and implement the required methods
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Submitting reservation adds record to database', (WidgetTester tester) async {
+    // Create mock instances of required dependencies
+    final MockDatabase mockDatabase = MockDatabase();
+    final MockStore mockStore = MockStore();
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MaterialApp(home: ReservationPage(database: mockDatabase, store: mockStore)));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Find the submit button
+    final submitButtonFinder = find.widgetWithText(ElevatedButton, 'Submit Reservation');
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Tap the submit button.
+    await tester.tap(submitButtonFinder);
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the _storeRecord method is called with the correct arguments
+    verify(mockStore.add(mockDatabase, String as Map<String, dynamic>)).called(1); // Verify the call with correct arguments
   });
 }
