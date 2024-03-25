@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mookata/reserve/reservation_page.dart';
+import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.dart เข้ามา
 
 class HomePage extends StatelessWidget {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -27,6 +28,13 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void goToPayment(BuildContext context) { // เพิ่มฟังก์ชันนี้เพื่อไปยังหน้า Payment
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PaymentPage()), // เรียกใช้งานหน้า PaymentPage
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,9 +42,19 @@ class HomePage extends StatelessWidget {
         title: Text('Firestore Example'),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () => addUser(context),
-          child: Text('Add User and Open Reservation Page'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => addUser(context),
+              child: Text('Add User and Open Reservation Page'),
+            ),
+            SizedBox(height: 20), // เพิ่มระยะห่างระหว่างปุ่ม
+            ElevatedButton(
+              onPressed: () => goToPayment(context), // เรียกใช้งานฟังก์ชัน goToPayment เมื่อคลิก
+              child: Text('Go to Payment'), // ตั้งชื่อปุ่มว่า "Go to Payment"
+            ),
+          ],
         ),
       ),
     );
