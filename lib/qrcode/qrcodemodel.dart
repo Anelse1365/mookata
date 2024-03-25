@@ -45,11 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('Scan QR Code'),
               ),
               SizedBox(height: 20),
-              Text(
-                'QR Code Result: $scanresult',
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   // Navigate to the callqrcode.dart screen when the button is clicked
@@ -58,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     MaterialPageRoute(builder: (context) => EmployeeCallForm()),
                   );
                 },
-                child: Text('Go to Call QR Code Form'),
+                child: Text('เรียกพนักงาน'),
               ),
             ],
           ),
