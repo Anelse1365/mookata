@@ -62,8 +62,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(

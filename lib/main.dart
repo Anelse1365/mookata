@@ -1,15 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mookata/home_page.dart';
+import 'package:flutter/material.dart';
+import 'package:mookata/Auth/login.dart';
+import 'home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  CollectionReference<Map<String, dynamic>> reservationsCollection =
-      firestore.collection('reservations');
-
   runApp(MyApp());
 }
 
@@ -17,7 +14,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      title: 'Firebase Auth Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
+            // ผู้ใช้ได้ล็อกอินแล้ว
+            return HomePage();
+          } else {
+            // ผู้ใช้ยังไม่ได้ล็อกอิน
+            return LoginPage();
+          }
+        },
+      ),
     );
   }
 }
