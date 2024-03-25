@@ -7,10 +7,10 @@ class ReservationPage extends StatefulWidget {
   final CollectionReference<Map<String, dynamic>> reservationsCollection;
 
   const ReservationPage({
-    Key? key,
+    super.key,
     required this.firestore,
     required this.reservationsCollection,
-  }) : super(key: key);
+  });
 
   @override
   _ReservationPageState createState() => _ReservationPageState();
@@ -32,18 +32,28 @@ class _ReservationPageState extends State<ReservationPage> {
   }
 
   Future<void> _reserveTable() async {
-    try {
-      await widget.reservationsCollection.add({
-        'table_number': selectedTable,
-        'number_of_people': numberOfPeople,
-        'time': selectedTime.format(context),
-        'date': selectedDate,
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Table reserved successfully')));
-    } catch (e) {
-      print('Error reserving table: $e');
+  try {
+    // ตรวจสอบว่าโต๊ะที่เลือกถูกจองไปแล้วหรือไม่
+    QuerySnapshot<Map<String, dynamic>> reservationQuery = await widget.reservationsCollection.where('table_number', isEqualTo: selectedTable).get();
+    
+    if (reservationQuery.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Table is already reserved')));
+      return; // ออกจากเมทอดหากโต๊ะถูกจองแล้ว
     }
+
+    // ถ้าโต๊ะยังไม่ถูกจอง ทำการเพิ่มข้อมูลเข้า Firestore
+    await widget.reservationsCollection.add({
+      'table_number': selectedTable,
+      'number_of_people': numberOfPeople,
+      'time': selectedTime.format(context),
+      'date': selectedDate,
+    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Table reserved successfully')));
+  } catch (e) {
+    print('Error reserving table: $e');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
