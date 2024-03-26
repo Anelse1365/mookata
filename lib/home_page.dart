@@ -4,6 +4,7 @@ import 'package:mookata/reserve/reservation_page.dart';
 import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.dart เข้ามา
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mookata/review/review_page.dart';
+import 'package:mookata/review/review_all.dart';
 
 class HomePage extends StatelessWidget {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -59,7 +60,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 20), // เพิ่มระยะห่างระหว่างปุ่ม
             ElevatedButton(
              onPressed: () {
-                Navigator.push(context,MaterialPageRoute(builder: (context) => ReviewPage()),);},
+                Navigator.push(context,MaterialPageRoute(builder: (context) => ReviewAll()),);},
               child: Text('review'),
             ),
           ],
