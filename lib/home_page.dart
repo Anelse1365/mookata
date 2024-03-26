@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mookata/reserve/reservation_page.dart';
 import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.dart เข้ามา
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mookata/review/review_page.dart';
 
 class HomePage extends StatelessWidget {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -54,6 +55,12 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => goToPayment(context), // เรียกใช้งานฟังก์ชัน goToPayment เมื่อคลิก
               child: Text('Go to Payment'), // ตั้งชื่อปุ่มว่า "Go to Payment"
+            ),
+            SizedBox(height: 20), // เพิ่มระยะห่างระหว่างปุ่ม
+            ElevatedButton(
+             onPressed: () {
+                Navigator.push(context,MaterialPageRoute(builder: (context) => ReviewPage()),);},
+              child: Text('review'),
             ),
           ],
         ),

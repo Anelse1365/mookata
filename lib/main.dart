@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mookata/Auth/login.dart';
 import 'home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mookata/review/review_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
