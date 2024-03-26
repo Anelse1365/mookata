@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mookata/booking/booking_picktable.dart';
 import 'package:mookata/reserve/reservation_page.dart';
 import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.dart เข้ามา
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,15 +27,25 @@ class HomePage extends StatelessWidget {
     addData('users', userData);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ReservationPage(firestore: firestore, reservationsCollection: firestore.collection('reservations'))),
+      MaterialPageRoute(
+          builder: (context) => ReservationPage(
+              firestore: firestore,
+              reservationsCollection: firestore.collection('reservations'))),
     );
   }
 
-  void goToPayment(BuildContext context) { // เพิ่มฟังก์ชันนี้เพื่อไปยังหน้า Payment
+  void goToPayment(BuildContext context) {
+    // เพิ่มฟังก์ชันนี้เพื่อไปยังหน้า Payment
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PaymentPage()), // เรียกใช้งานหน้า PaymentPage
+      MaterialPageRoute(
+          builder: (context) => PaymentPage()), // เรียกใช้งานหน้า PaymentPage
     );
+  }
+
+  void goToBooking(BuildContext context) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => BookingPickTablePage()));
   }
 
   @override
@@ -53,14 +64,23 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 20), // เพิ่มระยะห่างระหว่างปุ่ม
             ElevatedButton(
-              onPressed: () => goToPayment(context), // เรียกใช้งานฟังก์ชัน goToPayment เมื่อคลิก
+              onPressed: () => goToPayment(
+                  context), // เรียกใช้งานฟังก์ชัน goToPayment เมื่อคลิก
               child: Text('Go to Payment'), // ตั้งชื่อปุ่มว่า "Go to Payment"
             ),
             SizedBox(height: 20), // เพิ่มระยะห่างระหว่างปุ่ม
             ElevatedButton(
-             onPressed: () {
-                Navigator.push(context,MaterialPageRoute(builder: (context) => ReviewPage()),);},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReviewPage()),
+                );
+              },
               child: Text('review'),
+            ),
+            ElevatedButton(
+              onPressed: () => goToBooking(context),
+              child: Text('booking'),
             ),
           ],
         ),
