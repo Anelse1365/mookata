@@ -6,7 +6,7 @@ import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.da
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mookata/review/review_page.dart';
 import 'package:mookata/review/review_all.dart';
-
+import 'package:mookata/Stock_check/Stock_check.dart';
 class HomePage extends StatelessWidget {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -49,6 +49,12 @@ class HomePage extends StatelessWidget {
         MaterialPageRoute(builder: (context) => BookingPickTablePage()));
   }
 
+  void goToStock(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Stock_check(title: 'Stock Check',)),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +88,10 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => goToBooking(context),
               child: Text('booking'),
+            ),
+            ElevatedButton(
+              onPressed: () => goToStock(context), // Corrected to goToStock
+              child: Text('Go to Stock Check'), // Updated button text
             ),
           ],
         ),
