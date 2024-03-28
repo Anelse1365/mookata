@@ -4,9 +4,11 @@ import 'package:mookata/booking/booking_picktable.dart';
 import 'package:mookata/reserve/reservation_page.dart';
 import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.dart เข้ามา
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:mookata/review/review_page.dart';
 import 'package:mookata/review/review_all.dart';
 import 'package:mookata/Stock_check/Stock_check.dart';
+
 class HomePage extends StatelessWidget {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -52,9 +54,13 @@ class HomePage extends StatelessWidget {
   void goToStock(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Stock_check(title: 'Stock Check',)),
+      MaterialPageRoute(
+          builder: (context) => Stock_check(
+                title: 'Stock Check',
+              )),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,13 +106,49 @@ class HomePage extends StatelessWidget {
   }
 }
 
-void main() {
+class Bar extends StatefulWidget {
+  const Bar({super.key});
+
+  @override
+  State<Bar> createState() => _BarState();
+}
+
+class _BarState extends State<Bar> {
+  int currentIndex = 0;
+  List widgetOptions = [
+    HomePage(),
+    BookingPickTablePage(), //พาไปหน้าจองโต๊ะ
+    Text('Profile'),
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: widgetOptions[currentIndex],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.table_restaurant_sharp), label: 'Table'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle), label: 'Profile'),
+        ],
+        currentIndex: currentIndex,
+        onTap: (value) => setState(() => currentIndex = value),
+      ),
+    );
+  }
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MaterialApp(
     title: 'Your App',
     theme: ThemeData(
       primarySwatch: Colors.blue,
     ),
-    home: HomePage(),
+    home: Bar(), // เรียกใช้ Bar แทน HomePage
   ));
 }
