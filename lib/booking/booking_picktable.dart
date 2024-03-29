@@ -59,7 +59,8 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
                             selectedTable = isSelected ? null : tableNumber;
                           });
                           int? currentReservState = tableStates[tableNumber];
-                          print('Table $tableNumber is ${currentReservState == 1 ? 'booked' : 'available'}');
+                          print(
+                              'Table $tableNumber is ${currentReservState == 1 ? 'booked' : 'available'}');
                           if (currentReservState != 1) {
                             // โต๊ะที่ reserv_state = 0 จะไปยังหน้าจองโต๊ะ
                             Navigator.push(
@@ -70,7 +71,8 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
                                   reservationsCollection: FirebaseFirestore
                                       .instance
                                       .collection('reservations'),
-                                  selectedTable: tableNumber, // ส่งหมายเลขโต๊ะที่เลือกไปยัง ReservationPage
+                                  selectedTable:
+                                      tableNumber, // ส่งหมายเลขโต๊ะที่เลือกไปยัง ReservationPage
                                 ),
                               ),
                             );

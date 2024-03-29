@@ -160,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 right: 20,
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   elevation: 5,
                   child: Container(
@@ -189,6 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.teal,
                               ),
                             ),
                             IconButton(
@@ -262,10 +263,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
+          SizedBox(height: 20),
           ElevatedButton(
             onPressed: _logout,
             child: Text('Logout'),
           ),
+          SizedBox(height: 20),
         ],
       ),
     );
