@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return BookingPickTablePage();
       case 2:
-        return Text('Profile');
+        return ProfileScreen();
       default:
         return Container();
     }

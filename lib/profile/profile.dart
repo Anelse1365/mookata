@@ -20,7 +20,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _fetchUserData() async {
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(_uid).get();
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(_uid).get();
     if (userDoc.exists) {
       setState(() {
         _userData = userDoc.data();
@@ -119,7 +120,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushNamedAndRemoveUntil(context, '../Auth/login.adrt', (route) => false);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+      (route) => false,
+    );
   }
 
   @override
@@ -159,8 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   elevation: 5,
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -238,7 +242,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         Divider(),
                         ListTile(
-                          leading: Icon(Icons.calendar_today, color: Colors.teal),
+                          leading:
+                              Icon(Icons.calendar_today, color: Colors.teal),
                           title: Text(_userData!['dateOfBirth'] == null
                               ? 'N/A'
                               : DateFormat('dd/MM/yyyy').format(
