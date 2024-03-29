@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Stock_check(
+        builder: (context) => const Stock_check(
           title: 'Stock Check',
         ),
       ),
@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return BookingPickTablePage();
       case 2:
-        return ProfileScreen();
+        return const ProfileScreen();
       default:
         return Container();
     }
@@ -117,8 +117,8 @@ class _HomePageState extends State<HomePage> {
       crossAxisAlignment: CrossAxisAlignment.start, // จัดตำแหน่งตามแนวนอน
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 20), // กำหนดระยะห่างด้านซ้าย
+        const Padding(
+          padding: EdgeInsets.only(left: 20), // กำหนดระยะห่างด้านซ้าย
           child: Text(
             'Promotions',
             style: TextStyle(
@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         CarouselSlider(
           items: [
             Image.asset('assets/ad/ad1.png'),
@@ -141,18 +141,18 @@ class _HomePageState extends State<HomePage> {
             enableInfiniteScroll: true,
             reverse: false,
             autoPlay: true,
-            autoPlayInterval: Duration(seconds: 3),
-            autoPlayAnimationDuration: Duration(milliseconds: 800),
+            autoPlayInterval: const Duration(seconds: 3),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
             autoPlayCurve: Curves.fastOutSlowIn,
             enlargeCenterPage: true,
             scrollDirection: Axis.horizontal,
           ),
         ),
 
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () => goToPayment(context),
-          child: Text('Go to Payment'),
+          child: const Text('Go to Payment'),
         ),
         ElevatedButton(
           onPressed: () {
@@ -161,16 +161,16 @@ class _HomePageState extends State<HomePage> {
               MaterialPageRoute(builder: (context) => ReviewPage()),
             );
           },
-          child: Text('Review'),
+          child: const Text('Review'),
         ),
         ElevatedButton(
           onPressed: () => goToBooking(context),
-          child: Text('Booking'),
+          child: const Text('Booking'),
         ),
         ElevatedButton(
           onPressed: () =>
               goToEmployeeCallForm(context), // Corrected to EmployeeCallForm
-          child: Text('Go to EmployeeCallForm'), // Updated button text
+          child: const Text('Go to EmployeeCallForm'), // Updated button text
         ), // EmployeeCallForm
       ],
     );
