@@ -8,6 +8,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:mookata/review/review_page.dart';
 import 'package:mookata/review/review_all.dart';
 import 'package:mookata/Stock_check/Stock_check.dart';
+import 'package:mookata/profile/profile.dart';
+
 
 class HomePage extends StatelessWidget {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -92,6 +94,15 @@ class HomePage extends StatelessWidget {
               child: Text('review'),
             ),
             ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                );
+              },
+              child: Text('profile'),
+            ),
+            ElevatedButton(
               onPressed: () => goToBooking(context),
               child: Text('booking'),
             ),
@@ -99,6 +110,7 @@ class HomePage extends StatelessWidget {
               onPressed: () => goToStock(context), // Corrected to goToStock
               child: Text('Go to Stock Check'), // Updated button text
             ),
+            
           ],
         ),
       ),
