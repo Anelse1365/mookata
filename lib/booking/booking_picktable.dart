@@ -67,7 +67,9 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: isSelected ? Colors.black : Colors.blue,
+            color: isSelected
+                ? const Color.fromARGB(255, 130, 130, 130)
+                : Color.fromARGB(255, 255, 114, 32),
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Center(

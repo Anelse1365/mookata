@@ -32,28 +32,32 @@ class _ReservationPageState extends State<ReservationPage> {
   }
 
   Future<void> _reserveTable() async {
-  try {
-    // ตรวจสอบว่าโต๊ะที่เลือกถูกจองไปแล้วหรือไม่
-    QuerySnapshot<Map<String, dynamic>> reservationQuery = await widget.reservationsCollection.where('table_number', isEqualTo: selectedTable).get();
-    
-    if (reservationQuery.docs.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Table is already reserved')));
-      return; // ออกจากเมทอดหากโต๊ะถูกจองแล้ว
+    try {
+      // ตรวจสอบว่าโต๊ะที่เลือกถูกจองไปแล้วหรือไม่
+      QuerySnapshot<Map<String, dynamic>> reservationQuery = await widget
+          .reservationsCollection
+          .where('table_number', isEqualTo: selectedTable)
+          .get();
+
+      if (reservationQuery.docs.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Table is already reserved')));
+        return; // ออกจากเมทอดหากโต๊ะถูกจองแล้ว
+      }
+
+      // ถ้าโต๊ะยังไม่ถูกจอง ทำการเพิ่มข้อมูลเข้า Firestore
+      await widget.reservationsCollection.add({
+        'table_number': selectedTable,
+        'number_of_people': numberOfPeople,
+        'time': selectedTime.format(context),
+        'date': selectedDate,
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Table reserved successfully')));
+    } catch (e) {
+      print('Error reserving table: $e');
     }
-
-    // ถ้าโต๊ะยังไม่ถูกจอง ทำการเพิ่มข้อมูลเข้า Firestore
-    await widget.reservationsCollection.add({
-      'table_number': selectedTable,
-      'number_of_people': numberOfPeople,
-      'time': selectedTime.format(context),
-      'date': selectedDate,
-    });
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Table reserved successfully')));
-  } catch (e) {
-    print('Error reserving table: $e');
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +77,10 @@ class _ReservationPageState extends State<ReservationPage> {
                   selectedTable = value!;
                 });
               },
-              items: List.generate(10, (index) => DropdownMenuItem<int>(value: index + 1, child: Text('Table ${index + 1}'))),
+              items: List.generate(
+                  10,
+                  (index) => DropdownMenuItem<int>(
+                      value: index + 1, child: Text('Table ${index + 1}'))),
             ),
             SizedBox(height: 20),
             TextFormField(
@@ -88,7 +95,11 @@ class _ReservationPageState extends State<ReservationPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final pickedDate = await showDatePicker(context: context, initialDate: selectedDate, firstDate: DateTime.now(), lastDate: DateTime(2100));
+                final pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate,
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100));
                 if (pickedDate != null) {
                   setState(() {
                     selectedDate = pickedDate;
@@ -100,7 +111,8 @@ class _ReservationPageState extends State<ReservationPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final pickedTime = await showTimePicker(context: context, initialTime: selectedTime);
+                final pickedTime = await showTimePicker(
+                    context: context, initialTime: selectedTime);
                 if (pickedTime != null) {
                   setState(() {
                     selectedTime = pickedTime;
@@ -125,10 +137,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  CollectionReference<Map<String, dynamic>> reservationsCollection = firestore.collection('reservations');
+  CollectionReference<Map<String, dynamic>> reservationsCollection =
+      firestore.collection('reservations');
 
   runApp(ReservationPage(
-    firestore: firestore, 
+    firestore: firestore,
     reservationsCollection: reservationsCollection,
   ));
 }
