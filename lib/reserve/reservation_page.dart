@@ -5,11 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ReservationPage extends StatefulWidget {
   final FirebaseFirestore firestore;
   final CollectionReference<Map<String, dynamic>> reservationsCollection;
+  final int selectedTable; // เพิ่มพารามิเตอร์สำหรับรับหมายเลขโต๊ะที่ถูกเลือก
 
   const ReservationPage({
     Key? key,
     required this.firestore,
     required this.reservationsCollection,
+    required this.selectedTable, // รับค่าหมายเลขโต๊ะที่ถูกเลือก
   }) : super(key: key);
 
   @override
@@ -25,7 +27,7 @@ class _ReservationPageState extends State<ReservationPage> {
   @override
   void initState() {
     super.initState();
-    selectedTable = 1;
+    selectedTable = widget.selectedTable; // ใช้ selectedTable ที่รับค่ามาจาก parameter
     numberOfPeople = 1;
     selectedDate = DateTime.now();
     selectedTime = TimeOfDay.now();
@@ -37,15 +39,16 @@ class _ReservationPageState extends State<ReservationPage> {
       QuerySnapshot<Map<String, dynamic>> reservationQuery = await widget
           .reservationsCollection
           .where('table_number', isEqualTo: selectedTable)
+          .where('reserv_state', isEqualTo: 0) // Check if the table is available
           .get();
 
-      if (reservationQuery.docs.isNotEmpty) {
+      if (reservationQuery.docs.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Table is already reserved')));
+            const SnackBar(content: Text('Table is not available for reservation')));
         return;
       }
 
-      // If the table is not reserved, add data to Firestore
+      // If the table is available, add data to Firestore
       await widget.reservationsCollection.add({
         'table_number': selectedTable,
         'number_of_people': numberOfPeople,
@@ -79,7 +82,7 @@ class _ReservationPageState extends State<ReservationPage> {
                 });
               },
               items: List.generate(
-                  10,
+                  20,
                   (index) => DropdownMenuItem<int>(
                       value: index + 1, child: Text('Table ${index + 1}'))),
             ),
@@ -128,7 +131,7 @@ class _ReservationPageState extends State<ReservationPage> {
               child: Text('Reserve Table'),
             ),
           ],
-        ),
+        ),  
       ),
     );
   }
@@ -141,16 +144,9 @@ void main() async {
   CollectionReference<Map<String, dynamic>> reservationsCollection =
       firestore.collection('reservations');
 
-  // Adding reservation state to each table
-  for (int i = 1; i <= 10; i++) {
-    reservationsCollection.add({
-      'table_number': i,
-      'reserv_state': 0, // Set reservation state to 0 (not reserved)
-    });
-  }
-
   runApp(ReservationPage(
     firestore: firestore,
     reservationsCollection: reservationsCollection,
+    selectedTable: 1, // กำหนดหมายเลขโต๊ะเริ่มต้นที่ 1
   ));
 }

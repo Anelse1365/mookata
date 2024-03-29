@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mookata/reservation_page.dart';
 import 'package:mookata/reserve/reservation_page.dart';
 
 class BookingPickTablePage extends StatefulWidget {
@@ -11,6 +10,10 @@ class BookingPickTablePage extends StatefulWidget {
 
 class _BookingPickTablePageState extends State<BookingPickTablePage> {
   int? selectedTable;
+
+  Color getTableColor(int? reservState) {
+    return reservState == 1 ? Colors.grey : Colors.orange;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,6 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
-          // เก็บสถานะการจองของโต๊ะไว้ใน Map
           Map<int, int> tableStates = {};
           snapshot.data!.docs.forEach((doc) {
             tableStates[doc['table_number']] = doc['reserv_state'];
@@ -46,37 +48,39 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
                   itemBuilder: (context, index) {
                     int tableNumber = index + 1;
                     int? reservState = tableStates[tableNumber];
-                    int? reservState2 = tableStates[tableNumber];
                     bool isSelected = selectedTable == tableNumber;
-
-                    // กำหนดสีของโต๊ะตามสถานะการจอง
-                    Color tableColor =
-                        reservState == 1 ? Colors.grey : Colors.orange;
-
-                    // ตรวจสอบว่าโต๊ะยังไม่ได้จองและไม่ได้เลือก
-                    bool canSelect = reservState2 == 0;
+                    Color tableColor = getTableColor(reservState);
 
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: InkWell(
                         onTap: () {
-                          if (canSelect) {
-                            setState(() {
-                              selectedTable = isSelected ? null : tableNumber;
-                            });
-                            if (selectedTable != null) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ReservationPage(
-                                    firestore: FirebaseFirestore.instance,
-                                    reservationsCollection: FirebaseFirestore
-                                        .instance
-                                        .collection('reservations'),
-                                  ),
+                          setState(() {
+                            selectedTable = isSelected ? null : tableNumber;
+                          });
+                          int? currentReservState = tableStates[tableNumber];
+                          print('Table $tableNumber is ${currentReservState == 1 ? 'booked' : 'available'}');
+                          if (currentReservState != 1) {
+                            // โต๊ะที่ reserv_state = 0 จะไปยังหน้าจองโต๊ะ
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ReservationPage(
+                                  firestore: FirebaseFirestore.instance,
+                                  reservationsCollection: FirebaseFirestore
+                                      .instance
+                                      .collection('reservations'),
+                                  selectedTable: tableNumber, // ส่งหมายเลขโต๊ะที่เลือกไปยัง ReservationPage
                                 ),
-                              );
-                            }
+                              ),
+                            );
+                          } else {
+                            // โต๊ะที่ reserv_state = 1 จะแสดงข้อความว่าไม่สามารถจองได้
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('โต๊ะที่เลือกไม่สามารถจองได้'),
+                              ),
+                            );
                           }
                         },
                         child: Container(
@@ -133,4 +137,10 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
       ),
     );
   }
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(BookingPickTablePage());
 }
