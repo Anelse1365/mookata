@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mookata/Auth/login.dart';
+import 'package:mookata/admin_home_page.dart';
 import 'home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mookata/review/review_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,8 +26,29 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasData) {
-            // ผู้ใช้ได้ล็อกอินแล้ว
-            return HomePage();
+            // ตรวจสอบบทบาทของผู้ใช้
+            return FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance.collection('users').doc(snapshot.data!.uid).get(),
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (userSnapshot.hasData) {
+                  // ผู้ใช้ได้ล็อกอินและมีข้อมูล
+                  final userData = userSnapshot.data!;
+                  final role = userData.get('role');
+                  if (role == 'admin') {
+                    // ผู้ใช้เป็น Admin
+                    return AdminHomePage();
+                  } else {
+                    // ผู้ใช้เป็น User
+                    return HomePage();
+                  }
+                } else {
+                  // ไม่พบข้อมูลผู้ใช้
+                  return Center(child: Text('No user data found'));
+                }
+              },
+            );
           } else {
             // ผู้ใช้ยังไม่ได้ล็อกอิน
             return LoginPage();

@@ -3,19 +3,19 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mookata/booking/booking_picktable.dart';
 import 'package:mookata/payment/payment.dart';
-import 'package:mookata/qrcode/callqrcode.dart';
+import 'package:mookata/reserve/deleteReserv.dart';
 import 'package:mookata/review/review_page.dart';
 import 'package:mookata/profile/profile.dart';
-import 'package:mookata/Stock_check/Stock_check.dart';
+import 'package:mookata/Stock_check/Stock_check.dart'; 
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class AdminHomePage extends StatefulWidget {
+  const AdminHomePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _AdminHomePageState createState() => _AdminHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _AdminHomePageState extends State<AdminHomePage> {
   int currentIndex = 0;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -35,13 +35,6 @@ class _HomePageState extends State<HomePage> {
     };
 
     addData('users', userData);
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (context) => ReservationPage(
-    //           firestore: firestore,
-    //           reservationsCollection: firestore.collection('reservations'))),
-    // );
   }
 
   void goToPayment(BuildContext context) {
@@ -69,13 +62,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void goToEmployeeCallForm(BuildContext context) {
-    // เพิ่มฟังก์ชันนี้เพื่อไปยังหน้า EmployeeCallForm
+  void goToDeleteReservationPage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ManageReservationsPage(firestore: FirebaseFirestore.instance, reservationsCollection: firestore.collection('reservations'),), // เปลี่ยนเป็น DeleteReservationPage
+    ),
+  );
+}
+
+
+  void goToManageReservationsPage(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              EmployeeCallForm()), // เรียกใช้งานหน้า EmployeeCallForm
+        builder: (context) => ManageReservationsPage(
+          firestore: firestore,
+          reservationsCollection: firestore.collection('reservations'),
+        ),
+      ),
     );
   }
 
@@ -87,11 +92,11 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home2'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.table_restaurant_sharp), label: 'Table'),
+              icon: Icon(Icons.table_restaurant_sharp), label: 'Table2'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: 'Profile'),
+              icon: Icon(Icons.account_circle), label: 'Profile2'),
         ],
         currentIndex: currentIndex,
         onTap: (value) => setState(() => currentIndex = value),
@@ -102,7 +107,7 @@ class _HomePageState extends State<HomePage> {
   Widget _getPage(int index) {
     switch (index) {
       case 0:
-        return _buildHomePageContent();
+        return _buildAdminHomePageContent();
       case 1:
         return BookingPickTablePage();
       case 2:
@@ -112,7 +117,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget _buildHomePageContent() {
+  Widget _buildAdminHomePageContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, // จัดตำแหน่งตามแนวนอน
       mainAxisAlignment: MainAxisAlignment.center,
@@ -148,12 +153,7 @@ class _HomePageState extends State<HomePage> {
             scrollDirection: Axis.horizontal,
           ),
         ),
-
         SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () => goToPayment(context),
-          child: Text('Go to Payment'),
-        ),
         ElevatedButton(
           onPressed: () {
             Navigator.push(
@@ -164,14 +164,13 @@ class _HomePageState extends State<HomePage> {
           child: Text('Review'),
         ),
         ElevatedButton(
-          onPressed: () => goToBooking(context),
-          child: Text('Booking'),
+          onPressed: () => goToStock(context),
+          child: Text('Go to Stock Check'),
         ),
         ElevatedButton(
-          onPressed: () =>
-              goToEmployeeCallForm(context), // Corrected to EmployeeCallForm
-          child: Text('Go to EmployeeCallForm'), // Updated button text
-        ), // EmployeeCallForm
+          onPressed: () => goToDeleteReservationPage(context),
+          child: Text('Delete Reservations'),
+        ),
       ],
     );
   }

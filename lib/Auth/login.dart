@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'register_page.dart';
 import 'package:mookata/home_page.dart';
+import 'package:mookata/admin_home_page.dart'; // Import admin home page
 
 class LoginPage extends StatefulWidget {
   @override
@@ -78,14 +80,24 @@ class _LoginPageState extends State<LoginPage> {
                       ElevatedButton(
                         onPressed: () async {
                           try {
-                            await FirebaseAuth.instance.signInWithEmailAndPassword(
+                            final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                               email: _emailController.text,
                               password: _passwordController.text,
                             );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage()),
-                            );
+                            final user = userCredential.user;
+                            // Check user role
+                            if (user != null) {
+                              // Assuming role is stored as 'role' field in Firestore
+                              final userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+                              final userRole = userData.get('role');
+                              if (userRole == 'admin') {
+                                // Redirect to admin home page
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdminHomePage()));
+                              } else {
+                                // Redirect to regular home page
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+                              }
+                            }
                           } catch (e) {
                             showDialog(
                               context: context,
