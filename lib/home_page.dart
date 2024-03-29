@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mookata/booking/booking_picktable.dart';
 import 'package:mookata/reserve/reservation_page.dart';
-import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.dart เข้ามา
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:mookata/payment/payment.dart';
 import 'package:mookata/review/review_page.dart';
-import 'package:mookata/review/review_all.dart';
-import 'package:mookata/Stock_check/Stock_check.dart';
 import 'package:mookata/profile/profile.dart';
+import 'package:mookata/Stock_check/Stock_check.dart';
 
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key})
+      : super(
+            key:
+                key); // Provide a non-null default value for the 'key' parameter
 
-class HomePage extends StatelessWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int currentIndex = 0;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> addData(String collectionName, Map<String, dynamic> data) async {
@@ -40,11 +47,9 @@ class HomePage extends StatelessWidget {
   }
 
   void goToPayment(BuildContext context) {
-    // เพิ่มฟังก์ชันนี้เพื่อไปยังหน้า Payment
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => PaymentPage()), // เรียกใช้งานหน้า PaymentPage
+      MaterialPageRoute(builder: (context) => PaymentPage()),
     );
   }
 
@@ -70,73 +75,7 @@ class HomePage extends StatelessWidget {
         title: Text('Firestore Example'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () => addUser(context),
-              child: Text('Add User and Open Reservation Page'),
-            ),
-            SizedBox(height: 20), // เพิ่มระยะห่างระหว่างปุ่ม
-            ElevatedButton(
-              onPressed: () => goToPayment(
-                  context), // เรียกใช้งานฟังก์ชัน goToPayment เมื่อคลิก
-              child: Text('Go to Payment'), // ตั้งชื่อปุ่มว่า "Go to Payment"
-            ),
-            SizedBox(height: 20), // เพิ่มระยะห่างระหว่างปุ่ม
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ReviewPage()),
-                );
-              },
-              child: Text('review'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
-                );
-              },
-              child: Text('profile'),
-            ),
-            ElevatedButton(
-              onPressed: () => goToBooking(context),
-              child: Text('booking'),
-            ),
-            ElevatedButton(
-              onPressed: () => goToStock(context), // Corrected to goToStock
-              child: Text('Go to Stock Check'), // Updated button text
-            ),
-            
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Bar extends StatefulWidget {
-  const Bar({super.key});
-
-  @override
-  State<Bar> createState() => _BarState();
-}
-
-class _BarState extends State<Bar> {
-  int currentIndex = 0;
-  List widgetOptions = [
-    HomePage(),
-    BookingPickTablePage(), //พาไปหน้าจองโต๊ะ
-    Text('Profile'),
-  ];
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: widgetOptions[currentIndex],
+        child: _getPage(currentIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
@@ -151,16 +90,61 @@ class _BarState extends State<Bar> {
       ),
     );
   }
-}
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MaterialApp(
-    title: 'Your App',
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
-    ),
-    home: Bar(), // เรียกใช้ Bar แทน HomePage
-  ));
+  Widget _getPage(int index) {
+    switch (index) {
+      case 0:
+        return _buildHomePageContent();
+      case 1:
+        return BookingPickTablePage();
+      case 2:
+        return Text('Profile');
+      default:
+        return Container();
+    }
+  }
+
+  Widget _buildHomePageContent() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: () => addUser(context),
+          child: Text('Add User and Open Reservation Page'),
+        ),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () => goToPayment(context),
+          child: Text('Go to Payment'),
+        ),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ReviewPage()),
+            );
+          },
+          child: Text('Review'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfileScreen()),
+            );
+          },
+          child: Text('Profile'),
+        ),
+        ElevatedButton(
+          onPressed: () => goToBooking(context),
+          child: Text('Booking'),
+        ),
+        ElevatedButton(
+          onPressed: () => goToStock(context),
+          child: Text('Go to Stock Check'),
+        ),
+      ],
+    );
+  }
 }
