@@ -31,25 +31,57 @@ class _ReservationPageState extends State<ReservationPage> {
     numberOfPeople = 1;
     selectedDate = DateTime.now();
     selectedTime = TimeOfDay.now();
+
+    // เรียกฟังก์ชันเพื่ออัปเดตค่า selectedTable
+    updateSelectedTable();
   }
 
-  Future<void> _reserveTable() async {
-    try {
-      // Check if the selected table is already reserved
-      QuerySnapshot<Map<String, dynamic>> reservationQuery = await widget
-          .reservationsCollection
-          .where('table_number', isEqualTo: selectedTable)
-          .where('reserv_state', isEqualTo: 0) // Check if the table is available
-          .get();
+  // ฟังก์ชันสำหรับอัปเดตค่า selectedTable จากฐานข้อมูล
+  Future<void> updateSelectedTable() async {
+    // ค้นหาข้อมูลการจองโต๊ะจากฐานข้อมูล
+    DocumentSnapshot<Map<String, dynamic>> tableDoc = await widget.reservationsCollection
+        .doc(selectedTable.toString())
+        .get();
 
-      if (reservationQuery.docs.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Table is not available for reservation')));
-        return;
+    // ตรวจสอบว่าโต๊ะที่เลือกมีการจองหรือไม่
+    if (tableDoc.exists) {
+      int reservState = tableDoc['reserv_state'];
+
+      // ถ้าโต๊ะมีการจอง ให้อัปเดตค่า selectedTable ให้เป็นโต๊ะที่ว่างถัดไป
+      if (reservState == 1) {
+        await findNextAvailableTable();
       }
+    }
+  }
 
-      // If the table is available, add data to Firestore
-      await widget.reservationsCollection.add({
+  // ฟังก์ชันสำหรับค้นหาโต๊ะที่ว่างถัดไป
+  Future<void> findNextAvailableTable() async {
+    QuerySnapshot<Map<String, dynamic>> reservationsSnapshot = await widget.reservationsCollection
+        .where('reserv_state', isEqualTo: 0)
+        .orderBy('table_number')
+        .limit(1)
+        .get();
+
+    if (reservationsSnapshot.docs.isNotEmpty) {
+      setState(() {
+        selectedTable = reservationsSnapshot.docs[0]['table_number'];
+      });
+    }
+  }
+
+  // ฟังก์ชันสำหรับการจองโต๊ะ
+  Future<void> _reserveTable() async {
+  try {
+    print('Selected table: $selectedTable'); // แสดงค่าของ selectedTable
+    // ตรวจสอบว่าโต๊ะที่เลือกสามารถจองได้หรือไม่
+    DocumentSnapshot<Map<String, dynamic>> tableDoc = await widget.reservationsCollection
+        .doc(selectedTable.toString())
+        .get();
+
+    if (!tableDoc.exists) {
+      print('Table ${selectedTable.toString()} does not exist.');
+      // เพิ่มโต๊ะที่เลือกลงในฐานข้อมูล
+      await widget.reservationsCollection.doc(selectedTable.toString()).set({
         'table_number': selectedTable,
         'number_of_people': numberOfPeople,
         'time': selectedTime.format(context),
@@ -58,10 +90,26 @@ class _ReservationPageState extends State<ReservationPage> {
       });
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Table reserved successfully')));
-    } catch (e) {
-      print('Error reserving table: $e');
+    } else if (tableDoc['reserv_state'] == 1) {
+      print('Table ${selectedTable.toString()} is already reserved.');
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Table is already reserved.')));
+      return;
+    } else {
+      // ถ้าโต๊ะสามารถจองได้ ให้เพิ่มข้อมูลการจองลงในฐานข้อมูล
+      await widget.reservationsCollection.doc(selectedTable.toString()).update({
+        'number_of_people': numberOfPeople,
+        'time': selectedTime.format(context),
+        'date': selectedDate,
+        'reserv_state': 1, // Set reservation state to 1 (reserved)
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Table reserved successfully')));
     }
+  } catch (e) {
+    print('Error reserving table: $e');
   }
+}
 
   @override
   Widget build(BuildContext context) {
