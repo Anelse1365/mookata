@@ -7,10 +7,10 @@ class ReservationPage extends StatefulWidget {
   final CollectionReference<Map<String, dynamic>> reservationsCollection;
 
   const ReservationPage({
-    super.key,
+    Key? key,
     required this.firestore,
     required this.reservationsCollection,
-  });
+  }) : super(key: key);
 
   @override
   _ReservationPageState createState() => _ReservationPageState();
@@ -33,7 +33,7 @@ class _ReservationPageState extends State<ReservationPage> {
 
   Future<void> _reserveTable() async {
     try {
-      // ตรวจสอบว่าโต๊ะที่เลือกถูกจองไปแล้วหรือไม่
+      // Check if the selected table is already reserved
       QuerySnapshot<Map<String, dynamic>> reservationQuery = await widget
           .reservationsCollection
           .where('table_number', isEqualTo: selectedTable)
@@ -42,15 +42,16 @@ class _ReservationPageState extends State<ReservationPage> {
       if (reservationQuery.docs.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Table is already reserved')));
-        return; // ออกจากเมทอดหากโต๊ะถูกจองแล้ว
+        return;
       }
 
-      // ถ้าโต๊ะยังไม่ถูกจอง ทำการเพิ่มข้อมูลเข้า Firestore
+      // If the table is not reserved, add data to Firestore
       await widget.reservationsCollection.add({
         'table_number': selectedTable,
         'number_of_people': numberOfPeople,
         'time': selectedTime.format(context),
         'date': selectedDate,
+        'reserv_state': 1, // Set reservation state to 1 (reserved)
       });
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Table reserved successfully')));
@@ -139,6 +140,14 @@ void main() async {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference<Map<String, dynamic>> reservationsCollection =
       firestore.collection('reservations');
+
+  // Adding reservation state to each table
+  for (int i = 1; i <= 10; i++) {
+    reservationsCollection.add({
+      'table_number': i,
+      'reserv_state': 0, // Set reservation state to 0 (not reserved)
+    });
+  }
 
   runApp(ReservationPage(
     firestore: firestore,
