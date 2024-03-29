@@ -6,7 +6,7 @@ import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.da
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mookata/review/review_page.dart';
-import 'package:mookata/review/review_all.dart';
+
 import 'package:mookata/Stock_check/Stock_check.dart';
 
 class MainLayout extends StatelessWidget {
