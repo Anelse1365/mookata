@@ -26,21 +26,23 @@ class MyApp extends StatelessWidget {
 
 class Stock_check extends StatelessWidget {
   const Stock_check({Key? key, required this.title}) : super(key: key);
-
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Color.fromARGB(255, 252, 162, 28),
         title: Text(title),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const FormScreen();
-              }));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FormScreen(),
+                ),
+              );
             },
             icon: const Text(
               "+",
@@ -50,7 +52,8 @@ class Stock_check extends StatelessWidget {
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('stock_check').snapshots(),
+        stream:
+            FirebaseFirestore.instance.collection('stock_check').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -59,7 +62,6 @@ class Stock_check extends StatelessWidget {
             return const Center(child: Text('An error occurred'));
           }
           final data = snapshot.data!.docs;
-
           if (data.isEmpty) {
             return const Center(
               child: Text(
@@ -68,35 +70,107 @@ class Stock_check extends StatelessWidget {
               ),
             );
           }
-
-          return ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              final item = TransactionItem.fromMap(data[index].data() as Map<String, dynamic>);
-              return Card(
-                elevation: 10,
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 30,
-                    child: Text("${item.item_amount}"),
+          return SingleChildScrollView(
+            child: DataTable(
+              columnSpacing: 5, // ระยะห่างระหว่างคอลัมน์
+              dataRowHeight: 60, // ความสูงของแถว
+              headingRowHeight: 40, // ความสูงของหัวคอลัมน์
+              columns: const [
+                DataColumn(
+                  label: Text(
+                    'กก.',
+                    style: TextStyle(fontSize: 14),
                   ),
-                  title: Text(item.item_name),
-                  subtitle: Text(item.date_added.toString()),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      FirebaseFirestore.instance.collection('stock_check').doc(item.item_id).delete();
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return FormEditScreen(data: item);
-                    }));
-                  },
                 ),
-              );
-            },
+                DataColumn(
+                  label: Text(
+                    'ชื่อวัตถุดิบ',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Exp',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'แก้ไขหรือลบ',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+              rows: data.map((item) {
+                final itemData = TransactionItem.fromMap(
+                    item.data() as Map<String, dynamic>);
+                return DataRow(
+                  cells: [
+                    DataCell(
+                      CircleAvatar(
+                        radius: 15,
+                        backgroundColor: Colors.amber,
+                        child: Text(
+                          itemData.item_amount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        itemData.item_name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        'Exp: ${itemData.date_added.toString()}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    DataCell(
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit,
+                                color: Colors.blue, size: 20),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      FormEditScreen(data: itemData),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete,
+                                color: Colors.red, size: 20),
+                            onPressed: () {
+                              FirebaseFirestore.instance
+                                  .collection('stock_check')
+                                  .doc(itemData.item_id)
+                                  .delete();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
           );
         },
       ),

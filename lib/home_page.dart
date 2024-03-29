@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mookata/booking/booking_picktable.dart';
 import 'package:mookata/payment/payment.dart';
+import 'package:mookata/qrcode/callqrcode.dart';
 import 'package:mookata/review/review_page.dart';
 import 'package:mookata/profile/profile.dart';
 import 'package:mookata/Stock_check/Stock_check.dart';
@@ -65,6 +66,16 @@ class _HomePageState extends State<HomePage> {
           title: 'Stock Check',
         ),
       ),
+    );
+  }
+
+  void goToEmployeeCallForm(BuildContext context) {
+    // เพิ่มฟังก์ชันนี้เพื่อไปยังหน้า EmployeeCallForm
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              EmployeeCallForm()), // เรียกใช้งานหน้า EmployeeCallForm
     );
   }
 
@@ -160,6 +171,11 @@ class _HomePageState extends State<HomePage> {
           onPressed: () => goToStock(context),
           child: Text('Go to Stock Check'),
         ),
+        ElevatedButton(
+          onPressed: () =>
+              goToEmployeeCallForm(context), // Corrected to EmployeeCallForm
+          child: Text('Go to EmployeeCallForm'), // Updated button text
+        ), // EmployeeCallForm
       ],
     );
   }

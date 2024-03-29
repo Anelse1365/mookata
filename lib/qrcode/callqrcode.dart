@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EmployeeCallForm extends StatefulWidget {
   @override
@@ -11,7 +11,6 @@ class EmployeeCallForm extends StatefulWidget {
 class _EmployeeCallFormState extends State<EmployeeCallForm> {
   String tableNumber = '';
   List<String> services = [];
-  String qrCodeResult = '';
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +70,7 @@ class _EmployeeCallFormState extends State<EmployeeCallForm> {
             ElevatedButton(
               onPressed: () {
                 callEmployee();
+                Navigator.pop(context); // กลับไปยังหน้าหลัก
               },
               child: Text('ยืนยันการเรียกพนักงาน'),
             ),
@@ -80,22 +80,31 @@ class _EmployeeCallFormState extends State<EmployeeCallForm> {
     );
   }
 
-  void callEmployee() {
-    // Ensure that services is not null before accessing its value
-    List<String> selectedServices = services ?? [];
-    // Here you can implement the logic to call the employee
-    // You can use qrCodeResult, tableNumber, and selectedServices list to determine the request
-    // For example, you can send a request to a server or display a notification to the employee
-    // This function will be called when the user taps on the "Call Employee" button
-    print('Calling employee...');
-    print('QR Code Result: $qrCodeResult');
-    print('Table Number: $tableNumber');
-    print('Selected Services: $selectedServices');
-    // Concatenate the phone number with the appropriate scheme (tel:)
-    String phoneNumber = '1234567890'; // Replace this with the actual phone number
-    String url = 'tel:$phoneNumber';
-    // Call the phone number using the url_launcher package
-    launch(url);
+  void callEmployee() async {
+    // Check if user is signed in
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // Handle case where user is not signed in
+      print('User is not signed in');
+      return;
+    }
+
+    // Get the current user's ID
+    String userId = user.uid;
+
+    // Create a reference to the Firestore collection
+    CollectionReference callCollection =
+        FirebaseFirestore.instance.collection('calls');
+
+    // Add a new document with a generated ID
+    await callCollection.add({
+      'userId': userId,
+      'tableNumber': tableNumber,
+      'services': services,
+      'timestamp': DateTime.now(),
+    });
+
+    print('Call data sent to Firestore');
   }
 }
 
