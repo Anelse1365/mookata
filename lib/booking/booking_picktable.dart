@@ -39,6 +39,7 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Divider(), //เส้นกั้นระหว่างข้อความ
               Expanded(
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -107,6 +108,7 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
                   },
                 ),
               ),
+              Divider(), // เส้นกั้นระหว่างข้อความ
               SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -129,10 +131,18 @@ class _BookingPickTablePageState extends State<BookingPickTablePage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  '- 1 บัญชีสามารถจองได้สูงสุด 5 โต๊ะ',
+                  '- สีส้ม = จองได้',
                   style: TextStyle(fontSize: 16),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '- สีเทา = จองไม่ได้',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              Divider(), // เส้นกั้นระหว่างข้อความ
             ],
           );
         },

@@ -71,9 +71,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('LADA'),
-      ),
       body: Center(
         child: _getPage(currentIndex),
       ),
