@@ -13,7 +13,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
-  final _surnameController = TextEditingController();
   final _phoneController = TextEditingController();
   DateTime? _dateOfBirth;
   String? _gender;
@@ -23,7 +22,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
-    _surnameController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
@@ -32,7 +30,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.clear();
     _passwordController.clear();
     _nameController.clear();
-    _surnameController.clear();
     _phoneController.clear();
     setState(() {
       _dateOfBirth = null;
@@ -53,7 +50,6 @@ class _RegisterPageState extends State<RegisterPage> {
           .doc(userCredential.user!.uid)
           .set({
         'name': _nameController.text,
-        'surname': _surnameController.text,
         'phone': _phoneController.text,
         'dateOfBirth': _dateOfBirth?.millisecondsSinceEpoch,
         'gender': _gender,
@@ -140,16 +136,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       SizedBox(height: 16.0),
-                      TextField(
-                        controller: _surnameController,
-                        decoration: InputDecoration(
-                          labelText: 'Surname',
-                          prefixIcon: Icon(Icons.person),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                        ),
-                      ),
                       SizedBox(height: 16.0),
                       TextField(
                         controller: _phoneController,
