@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../TransactionItem.dart';
+import '../TransactionItem.dart'; // ต้องแก้ที่เป็นไฟล์จริงที่ TransactionItem อยู่
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FormScreen extends StatefulWidget {
@@ -22,9 +23,15 @@ class _FormScreenState extends State<FormScreen> {
   final itemNameController = TextEditingController();
   final typeController = TextEditingController();
   final amountController = TextEditingController();
-  final id = generateRandomString(8);
+  late String id;
 
   String? _selectedIngredientType;
+
+  @override
+  void initState() {
+    super.initState();
+    id = generateRandomString(8);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +124,7 @@ class _FormScreenState extends State<FormScreen> {
                       item_type: typeController.text,
                       item_amount: int.tryParse(amountController.text) ?? 0,
                       date_added: DateTime.now().toIso8601String(),
-                      date_expired:
-                          (DateTime.now().add(const Duration(days: 3)))
-                              .toIso8601String(),
+                      date_expired: calculateExpirationDate(_selectedIngredientType!),
                     );
 
                     try {
@@ -128,7 +133,11 @@ class _FormScreenState extends State<FormScreen> {
                           .collection('stock_check')
                           .doc(id);
                       await addData.set(transaction.toMap());
+
                       // Data added successfully
+                      print('ข้อมูลถูกเพิ่มลงใน Firestore แล้ว');
+                      print('วันที่หมดอายุ: ${transaction.date_expired}');
+
                       Navigator.pop(context);
                     } catch (e) {
                       // Error occurred while adding data
@@ -138,8 +147,7 @@ class _FormScreenState extends State<FormScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Color.fromARGB(255, 252, 162, 28), // สีที่คุณต้องการ
+                  backgroundColor: Color.fromARGB(255, 252, 162, 28), // สีที่คุณต้องการ
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                 ),
                 child: const Text(
@@ -155,5 +163,24 @@ class _FormScreenState extends State<FormScreen> {
         ),
       ),
     );
+  }
+
+  String calculateExpirationDate(String ingredientType) {
+    DateTime now = DateTime.now();
+    DateTime expirationDate;
+    switch (ingredientType) {
+      case 'ของสด':
+        expirationDate = now.add(const Duration(days: 3));
+        break;
+      case 'ของแห้ง':
+        expirationDate = now.add(const Duration(days: 7));
+        break;
+      case 'เครื่องปรุง':
+        expirationDate = now.add(const Duration(days: 365));
+        break;
+      default:
+        expirationDate = now; // Default to current date
+    }
+    return expirationDate.toIso8601String();
   }
 }
