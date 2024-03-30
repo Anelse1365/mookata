@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mookata/booking/booking_picktable.dart';
 import 'package:mookata/reserve/reservation_page.dart';
-import 'package:mookata/payment/payment.dart'; // Import ไฟล์ payment.dart เข้ามา
+import 'package:mookata/payment/payment_page.dart'; // Import ไฟล์ payment.dart เข้ามา
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mookata/review/review_page.dart';
@@ -43,28 +43,24 @@ class MainLayout extends StatelessWidget {
               onTap: () {
                 // Navigate to settings
               },
-            
             ),
             ListTile(
               title: Text('Settings'),
               onTap: () {
                 // Navigate to settings
               },
-            
             ),
             ListTile(
               title: Text('Settings'),
               onTap: () {
                 // Navigate to settings
               },
-            
             ),
             ListTile(
               title: Text('Settings'),
               onTap: () {
                 // Navigate to settings
               },
-            
             ),
           ],
         ),

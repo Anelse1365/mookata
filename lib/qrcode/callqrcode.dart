@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EmployeeCallForm extends StatefulWidget {
@@ -67,8 +67,29 @@ class _EmployeeCallFormState extends State<EmployeeCallForm> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                callEmployee();
+              onPressed: () async {
+                // Set loading state
+                setState(() {
+                  tableNumber = tableNumber;
+                });
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('ยืนยันการเรียกพนักงาน'),
+                      content: Text('กรุณารอสักครู่...'),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('ปิด'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                await callEmployee();
                 Navigator.pop(context); // กลับไปยังหน้าหลัก
               },
               child: const Text('ยืนยันการเรียกพนักงาน'),
@@ -79,7 +100,7 @@ class _EmployeeCallFormState extends State<EmployeeCallForm> {
     );
   }
 
-  void callEmployee() async {
+  Future<void> callEmployee() async {
     // Check if user is signed in
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {

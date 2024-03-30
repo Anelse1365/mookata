@@ -37,6 +37,13 @@ class CallQRCodeList extends StatelessWidget {
                 child: ListTile(
                   title: Text('เลขโต๊ะ: ${data['tableNumber']}'),
                   subtitle: Text('บริการ: ${data['services'].join(', ')}'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      // Delete the document from Firestore
+                      FirebaseFirestore.instance.collection('calls').doc(document.id).delete();
+                    },
+                  ),
                   onTap: () {
                     // Navigate to the detail page (callqrcode.dart)
                     Navigator.push(

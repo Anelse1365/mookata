@@ -7,6 +7,7 @@ import 'package:mookata/qrcode/callqrcode.dart';
 import 'package:mookata/review/review_page.dart';
 import 'package:mookata/profile/profile.dart';
 import 'package:mookata/Stock_check/Stock_check.dart';
+import 'package:mookata/qrcode/AdminCall.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -59,6 +60,13 @@ class _HomePageState extends State<HomePage> {
           title: 'Stock Check',
         ),
       ),
+    );
+  }
+
+  void goToCall(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CallQRCodeList()),
     );
   }
 
@@ -150,17 +158,21 @@ class _HomePageState extends State<HomePage> {
               MaterialPageRoute(builder: (context) => ReviewPage()),
             );
           },
-          child: const Text('Review'),
+          child: const Text('รีวิว'),
         ),
         ElevatedButton(
           onPressed: () => goToBooking(context),
-          child: const Text('Booking'),
+          child: const Text('จองโต๊ะ'),
         ),
         ElevatedButton(
           onPressed: () =>
               goToEmployeeCallForm(context), // Corrected to EmployeeCallForm
-          child: const Text('Go to EmployeeCallForm'), // Updated button text
+          child: const Text('เรียกพนักงาน'), // Updated button text
         ), // EmployeeCallForm
+        ElevatedButton(
+          onPressed: () => goToCall(context), // Corrected to EmployeeCallForm
+          child: const Text('Calling'), // Updated button text
+        ),
       ],
     );
   }
