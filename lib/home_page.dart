@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mookata/booking/booking_picktable.dart';
-import 'package:mookata/payment/payment.dart';
+
 import 'package:mookata/qrcode/callqrcode.dart';
 import 'package:mookata/review/review_page.dart';
 import 'package:mookata/profile/profile.dart';
@@ -42,13 +42,6 @@ class _HomePageState extends State<HomePage> {
     //           firestore: firestore,
     //           reservationsCollection: firestore.collection('reservations'))),
     // );
-  }
-
-  void goToPayment(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => PaymentPage()),
-    );
   }
 
   void goToBooking(BuildContext context) {
@@ -150,10 +143,6 @@ class _HomePageState extends State<HomePage> {
         ),
 
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () => goToPayment(context),
-          child: const Text('Go to Payment'),
-        ),
         ElevatedButton(
           onPressed: () {
             Navigator.push(

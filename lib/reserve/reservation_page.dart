@@ -23,6 +23,7 @@ class _ReservationPageState extends State<ReservationPage> {
   late int numberOfPeople;
   late DateTime selectedDate;
   late TimeOfDay selectedTime;
+  late int tableCapacity; // จำนวนคนในโต๊ะ
 
   @override
   void initState() {
@@ -71,45 +72,46 @@ class _ReservationPageState extends State<ReservationPage> {
 
   // ฟังก์ชันสำหรับการจองโต๊ะ
   Future<void> _reserveTable() async {
-  try {
-    print('Selected table: $selectedTable'); // แสดงค่าของ selectedTable
-    // ตรวจสอบว่าโต๊ะที่เลือกสามารถจองได้หรือไม่
-    DocumentSnapshot<Map<String, dynamic>> tableDoc = await widget.reservationsCollection
-        .doc(selectedTable.toString())
-        .get();
+    try {
+      print('Selected table: $selectedTable'); // แสดงค่าของ selectedTable
+      print('Number of People: $numberOfPeople'); // แสดงค่าของ numberOfPeople
+      // ตรวจสอบว่าโต๊ะที่เลือกสามารถจองได้หรือไม่
+      DocumentSnapshot<Map<String, dynamic>> tableDoc = await widget.reservationsCollection
+          .doc(selectedTable.toString())
+          .get();
 
-    if (!tableDoc.exists) {
-      print('Table ${selectedTable.toString()} does not exist.');
-      // เพิ่มโต๊ะที่เลือกลงในฐานข้อมูล
-      await widget.reservationsCollection.doc(selectedTable.toString()).set({
-        'table_number': selectedTable,
-        'number_of_people': numberOfPeople,
-        'time': selectedTime.format(context),
-        'date': selectedDate,
-        'reserv_state': 1, // Set reservation state to 1 (reserved)
-      });
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Table reserved successfully')));
-    } else if (tableDoc['reserv_state'] == 1) {
-      print('Table ${selectedTable.toString()} is already reserved.');
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Table is already reserved.')));
-      return;
-    } else {
-      // ถ้าโต๊ะสามารถจองได้ ให้เพิ่มข้อมูลการจองลงในฐานข้อมูล
-      await widget.reservationsCollection.doc(selectedTable.toString()).update({
-        'number_of_people': numberOfPeople,
-        'time': selectedTime.format(context),
-        'date': selectedDate,
-        'reserv_state': 1, // Set reservation state to 1 (reserved)
-      });
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Table reserved successfully')));
+      if (!tableDoc.exists) {
+        print('Table ${selectedTable.toString()} does not exist.');
+        // เพิ่มโต๊ะที่เลือกลงในฐานข้อมูล
+        await widget.reservationsCollection.doc(selectedTable.toString()).set({
+          'table_number': selectedTable,
+          'number_of_people': numberOfPeople,
+          'time': selectedTime.format(context),
+          'date': selectedDate,
+          'reserv_state': 1, // Set reservation state to 1 (reserved)
+        });
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Table reserved successfully')));
+      } else if (tableDoc['reserv_state'] == 1) {
+        print('Table ${selectedTable.toString()} is already reserved.');
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Table is already reserved.')));
+        return;
+      } else {
+        // ถ้าโต๊ะสามารถจองได้ ให้เพิ่มข้อมูลการจองลงในฐานข้อมูล
+        await widget.reservationsCollection.doc(selectedTable.toString()).update({
+          'number_of_people': numberOfPeople,
+          'time': selectedTime.format(context),
+          'date': selectedDate,
+          'reserv_state': 1, // Set reservation state to 1 (reserved)
+        });
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Table reserved successfully')));
+      }
+    } catch (e) {
+      print('Error reserving table: $e');
     }
-  } catch (e) {
-    print('Error reserving table: $e');
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +181,7 @@ class _ReservationPageState extends State<ReservationPage> {
               child: Text('Reserve Table'),
             ),
           ],
-        ),  
+        ),
       ),
     );
   }

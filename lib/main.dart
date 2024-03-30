@@ -9,10 +9,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,28 +26,28 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasData) {
             // ตรวจสอบบทบาทของผู้ใช้
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance.collection('users').doc(snapshot.data!.uid).get(),
               builder: (context, userSnapshot) {
                 if (userSnapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (userSnapshot.hasData) {
                   // ผู้ใช้ได้ล็อกอินและมีข้อมูล
                   final userData = userSnapshot.data!;
                   final role = userData.get('role');
                   if (role == 'admin') {
                     // ผู้ใช้เป็น Admin
-                    return AdminHomePage();
+                    return const AdminHomePage();
                   } else {
                     // ผู้ใช้เป็น User
-                    return HomePage();
+                    return const HomePage();
                   }
                 } else {
                   // ไม่พบข้อมูลผู้ใช้
-                  return Center(child: Text('No user data found'));
+                  return const Center(child: Text('No user data found'));
                 }
               },
             );

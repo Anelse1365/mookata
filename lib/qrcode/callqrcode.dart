@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EmployeeCallForm extends StatefulWidget {
@@ -16,16 +15,16 @@ class _EmployeeCallFormState extends State<EmployeeCallForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ฟอร์มเรียกพนักงาน'),
+        title: const Text('ฟอร์มเรียกพนักงาน'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'เลขโต๊ะ: ',
                 border: OutlineInputBorder(),
               ),
@@ -35,13 +34,13 @@ class _EmployeeCallFormState extends State<EmployeeCallForm> {
                 });
               },
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'เลือกบริการ:',
               style: TextStyle(fontSize: 16),
             ),
             CheckboxListTile(
-              title: Text('เติมถ่าน'),
+              title: const Text('เติมถ่าน'),
               value: services.contains('เติมถ่าน'),
               onChanged: (value) {
                 setState(() {
@@ -54,7 +53,7 @@ class _EmployeeCallFormState extends State<EmployeeCallForm> {
               },
             ),
             CheckboxListTile(
-              title: Text('เปลี่ยนกระทะ'),
+              title: const Text('เปลี่ยนกระทะ'),
               value: services.contains('เปลี่ยนกระทะ'),
               onChanged: (value) {
                 setState(() {
@@ -66,13 +65,13 @@ class _EmployeeCallFormState extends State<EmployeeCallForm> {
                 });
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 callEmployee();
                 Navigator.pop(context); // กลับไปยังหน้าหลัก
               },
-              child: Text('ยืนยันการเรียกพนักงาน'),
+              child: const Text('ยืนยันการเรียกพนักงาน'),
             ),
           ],
         ),

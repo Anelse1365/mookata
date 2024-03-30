@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:mookata/Auth/login.dart'; // Import your login page file
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
