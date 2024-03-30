@@ -104,7 +104,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -151,13 +150,18 @@ class _HomePageState extends State<HomePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(height: 20),
                       Text(
-                        'Hello,',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        'LA-DAปิ้งย่างซีฟู้ด',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                          color: Color.fromARGB(255, 0, 0, 0), // เพิ่มสีขาว
+                        ),
                       ),
                       if (_userData != null)
                         Text(
-                          '${_userData!['name']}',
+                          'ยินดีต้อนรับ, คุณ ${_userData!['name']}',
                           style: TextStyle(fontSize: 20),
                         ),
                     ],
@@ -166,19 +170,76 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 20),
-            // Promotions section
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Text(
-                'Promotions',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            SizedBox(height: 20),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ReviewPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(100, 100), // กำหนดขนาดปุ่ม
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10), // กำหนดรูปร่างของปุ่มเป็นสี่เหลี่ยม
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.rate_review,
+                              size: 40,
+                              color: Colors.orange), // เปลี่ยนสีไอคอนเป็นสีส้ม
+                          SizedBox(height: 5),
+                          Text('รีวิว',
+                              style: TextStyle(fontSize: 12)), // ชื่อปุ่ม
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => goToEmployeeCallForm(context),
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(200, 100), // กำหนดขนาดปุ่ม
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10), // กำหนดรูปร่างของปุ่มเป็นสี่เหลี่ยม
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.call,
+                              size: 40,
+                              color: Colors.orange), // เปลี่ยนสีไอคอนเป็นสีส้ม
+                          SizedBox(height: 5),
+                          Text('เรียกพนักงาน',
+                              style: TextStyle(fontSize: 12)), // ชื่อปุ่ม
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+              ],
             ),
             SizedBox(height: 20),
-            // Carousel slider for promotions
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'โปรโมชั่นแนะนำ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
             CarouselSlider(
               items: [
                 Image.asset('assets/ad/ad1.png'),
@@ -201,27 +262,6 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: 20),
             // Buttons for various actions
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ReviewPage()),
-                );
-              },
-              child: Text('รีวิว'),
-            ),
-            ElevatedButton(
-              onPressed: () => goToBooking(context),
-              child: Text('จองโต๊ะ'),
-            ),
-            ElevatedButton(
-              onPressed: () => goToEmployeeCallForm(context),
-              child: Text('เรียกพนักงาน'),
-            ),
-            ElevatedButton(
-              onPressed: () => goToCall(context),
-              child: Text('Calling'),
-            ),
           ],
         ),
       ),
