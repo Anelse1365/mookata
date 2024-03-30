@@ -131,7 +131,7 @@ class Stock_check extends StatelessWidget {
                     ),
                     DataCell(
                       Text(
-                        'Exp: ${itemData.date_added.toString()}',
+                        'Exp: ${itemData.date_expired.toString()}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
