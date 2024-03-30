@@ -83,30 +83,44 @@ class _PaymentPageState extends State<PaymentPage> {
   }
 
   Future<void> loadTableData() async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> snapshot =
-          await widget.reservationsCollection.get();
-      if (snapshot.docs.isNotEmpty) {
-        for (var doc in snapshot.docs) {
-          if (doc.data()['table_number'] == selectedTable) {
-            int numberOfPeople = doc.data()['number_of_people'];
-            setState(() {
-              this.numberOfPeople = numberOfPeople;
-              calculateTotalAmount();
-            });
-            break;
-          }
+  try {
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+        await widget.reservationsCollection.get();
+
+    // ตรวจสอบว่ามีข้อมูลในฐานข้อมูลหรือไม่
+    if (snapshot.docs.isNotEmpty) {
+      bool foundTableData = false; // ตัวแปรช่วยตรวจสอบว่าพบข้อมูลของโต๊ะที่เลือกหรือไม่
+
+      for (var doc in snapshot.docs) {
+        if (doc.data()['table_number'] == selectedTable) {
+          int numberOfPeople = doc.data()['number_of_people'];
+          setState(() {
+            this.numberOfPeople = numberOfPeople;
+            calculateTotalAmount();
+          });
+          foundTableData = true; // พบข้อมูลของโต๊ะที่เลือก
+          break;
         }
-      } else {
+      }
+
+      // ถ้าไม่พบข้อมูลของโต๊ะที่เลือก ให้รีเซ็ตค่า
+      if (!foundTableData) {
         setState(() {
           numberOfPeople = null;
           totalAmount = 0;
         });
       }
-    } catch (e) {
-      print('Error loading table data: $e');
+    } else {
+      // ถ้าไม่มีข้อมูลในฐานข้อมูล ให้รีเซ็ตค่า
+      setState(() {
+        numberOfPeople = null;
+        totalAmount = 0;
+      });
     }
+  } catch (e) {
+    print('Error loading table data: $e');
   }
+}
 
   void calculateTotalAmount() {
     if (numberOfPeople != null) {
